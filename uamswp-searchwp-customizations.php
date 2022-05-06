@@ -39,7 +39,7 @@ add_action('init', function() {
 			acf_add_options_sub_page(array(
 				'page_title' => 'Multisite Search Settings',
 				'menu_slug' => 'uamswp-searchwp-sites',
-				'menu_title' => 'UAMS Subsites',
+				'menu_title' => 'UAMS Search Settings',
 				'capability' => 'manage_options',
 				'position' => '100',
 				'parent_slug' => 'searchwp-settings',
@@ -60,7 +60,7 @@ add_action('init', function() {
 				'fields' => array(
 					array(
 						'key' => 'field_uams_searchwp_sites',
-						'label' => 'Sites',
+						'label' => 'Sites to include',
 						'name' => 'uams_searchwp_sites',
 						'type' => 'checkbox',
 						'instructions' => 'Sites to include in the search. Leave ',
@@ -80,6 +80,27 @@ add_action('init', function() {
 						'toggle' => 0,
 						'return_format' => 'value',
 						'save_custom' => 0,
+					),
+					array(
+						'key' => 'field_uams_searchwp_results_per_page',
+						'label' => 'Results per page',
+						'name' => 'uams_searchwp_results_per_page',
+						'type' => 'number',
+						'instructions' => '',
+						'required' => 0,
+						'conditional_logic' => 0,
+						'wrapper' => array(
+							'width' => '',
+							'class' => '',
+							'id' => '',
+						),
+						'default_value' => 20,
+						'placeholder' => '',
+						'prepend' => '',
+						'append' => '',
+						'min' => 5,
+						'max' => 30,
+						'step' => 1,
 					),
 				),
 				'location' => array(
@@ -116,9 +137,15 @@ function get_subsites_for_search() {
 	return $array;
 }
 
-// Return 20 results per page of SearchWP results.
+// Set results per page for SearchWP results.
 add_filter( 'searchwp\query\per_page', function( $per_page, $args ) {
-    return 20;
+	$results_per_page = get_field('uams_searchwp_results_per_page', 'option');
+	
+	// Default value
+	if (empty( $results_per_page )) {
+		$results_per_page = 20;
+	}
+    return $results_per_page;
 }, 30, 2 );
 
 // Conditionally remove a SearchWP Engine Source.
@@ -172,3 +199,5 @@ add_filter( 'searchwp\query\before', function( $query ) {
 	$links .= '</ul>';
 	return $links;
   }
+
+  
