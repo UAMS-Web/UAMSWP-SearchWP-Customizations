@@ -15,6 +15,10 @@ add_filter( 'searchwp\query\args', function( $args, $query ) {
 	}
 
 	$search_sites = get_field('uams_searchwp_sites', 'option');
+	
+	if (empty( $search_sites )) {
+		$search_sites = [1];
+	}
 
 	// Search sites listed in the settings.
 	$args['site'] = $search_sites;
@@ -24,87 +28,82 @@ add_filter( 'searchwp\query\args', function( $args, $query ) {
 
 	return $args;
 }, 10, 2 );
-// Add Settings Page
-if( function_exists('acf_add_options_page') ):
-
-	if ( 1 === get_current_blog_id() ) {
-
-		acf_add_options_page(array(
-			'page_title' => 'Multisite Search Settings',
-			'menu_slug' => 'uamswp-searchwp-sites',
-			'menu_title' => 'UAMS Subsites',
-			'capability' => 'manage_options',
-			'position' => '100',
-			'parent_slug' => 'searchwp-settings',
-			'icon_url' => '',
-			'redirect' => false,
-			'post_id' => 'options',
-			'autoload' => false,
-			'update_button' => 'Update',
-			'updated_message' => 'Options Updated',
-		));
-
-	}
+add_action('init', function() {
+	// Add Settings Page
+	if( function_exists('acf_add_options_page') ):
 	
-endif;
-
-if( function_exists('acf_add_local_field_group') ):
-
-	if ( 1 === get_current_blog_id() ) {
-
-		acf_add_local_field_group(array(
-			'key' => 'group_uamswp_subsite_search',
-			'title' => 'UAMS Subsite Search',
-			'fields' => array(
-				array(
-					'key' => 'field_uams_searchwp_sites',
-					'label' => 'Sites',
-					'name' => 'uams_searchwp_sites',
-					'type' => 'checkbox',
-					'instructions' => 'Sites to include in the search. Leave ',
-					'required' => 0,
-					'conditional_logic' => 0,
-					'wrapper' => array(
-						'width' => '',
-						'class' => '',
-						'id' => '',
-					),
-					'choices' => get_subsites_for_search(),
-					'allow_custom' => 0,
-					'default_value' => array(
-						1 => get_bloginfo( 'name' ),
-					),
-					'layout' => 'vertical',
-					'toggle' => 0,
-					'return_format' => 'value',
-					'save_custom' => 0,
-				),
-			),
-			'location' => array(
-				array(
+			if ( 1 !== get_current_blog_id() ) {
+				  return $args;
+				}
+	
+			acf_add_options_sub_page(array(
+				'page_title' => 'Multisite Search Settings',
+				'menu_slug' => 'uamswp-searchwp-sites',
+				'menu_title' => 'UAMS Subsites',
+				'capability' => 'manage_options',
+				'position' => '100',
+				'parent_slug' => 'searchwp-settings',
+				'redirect' => false,
+			));
+		
+	endif;
+	
+	if( function_exists('acf_add_local_field_group') ):
+	
+			if ( 1 !== get_current_blog_id() ) {
+			  return $args;
+			}
+	
+			acf_add_local_field_group(array(
+				'key' => 'group_uamswp_subsite_search',
+				'title' => 'UAMS Subsite Search',
+				'fields' => array(
 					array(
-						'param' => 'options_page',
-						'operator' => '==',
-						'value' => 'uamswp-searchwp-sites',
+						'key' => 'field_uams_searchwp_sites',
+						'label' => 'Sites',
+						'name' => 'uams_searchwp_sites',
+						'type' => 'checkbox',
+						'instructions' => 'Sites to include in the search. Leave ',
+						'required' => 0,
+						'conditional_logic' => 0,
+						'wrapper' => array(
+							'width' => '',
+							'class' => '',
+							'id' => '',
+						),
+						'choices' => get_subsites_for_search(),
+						'allow_custom' => 0,
+						'default_value' => array(
+							1 => get_bloginfo( 'name' ),
+						),
+						'layout' => 'vertical',
+						'toggle' => 0,
+						'return_format' => 'value',
+						'save_custom' => 0,
 					),
 				),
-			),
-			'menu_order' => 0,
-			'position' => 'normal',
-			'style' => 'default',
-			'label_placement' => 'left',
-			'instruction_placement' => 'label',
-			'hide_on_screen' => '',
-			'active' => true,
-			'description' => '',
-			'show_in_rest' => 0,
-		));
-
-	} else {
-		//Blank
-	}
-	
-endif;
+				'location' => array(
+					array(
+						array(
+							'param' => 'options_page',
+							'operator' => '==',
+							'value' => 'uamswp-searchwp-sites',
+						),
+					),
+				),
+				'menu_order' => 0,
+				'position' => 'normal',
+				'style' => 'default',
+				'label_placement' => 'left',
+				'instruction_placement' => 'label',
+				'hide_on_screen' => '',
+				'active' => true,
+				'description' => '',
+				'show_in_rest' => 0,
+			));
+		
+	endif;
+});
 
 function get_subsites_for_search() {
 	$subsites = get_sites();
@@ -173,5 +172,3 @@ add_filter( 'searchwp\query\before', function( $query ) {
 	$links .= '</ul>';
 	return $links;
   }
-
-  
