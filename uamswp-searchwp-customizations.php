@@ -14,7 +14,10 @@ add_filter( 'searchwp\query\args', function( $args, $query ) {
 	  return $args;
 	}
 
-	$search_sites = get_field('uams_searchwp_sites', 'option');
+	$search_sites = array();
+	if( class_exists('ACF') ) {
+		$search_sites = get_field('uams_searchwp_sites', 'option');
+	}
 	
 	if (empty( $search_sites )) {
 		$search_sites = [1];
@@ -23,11 +26,10 @@ add_filter( 'searchwp\query\args', function( $args, $query ) {
 	// Search sites listed in the settings.
 	$args['site'] = $search_sites;
 
-	// Retain site info in results.
-	// $args['fields'] = 'default';
-
 	return $args;
 }, 10, 2 );
+
+// Function to add ACF settings and fields
 add_action('init', function() {
 	// Add Settings Page
 	if( function_exists('acf_add_options_page') ):
@@ -48,6 +50,7 @@ add_action('init', function() {
 		
 	endif;
 	
+	// Add Search field group
 	if( function_exists('acf_add_local_field_group') ):
 	
 			if ( 1 !== get_current_blog_id() ) {
@@ -126,6 +129,7 @@ add_action('init', function() {
 	endif;
 });
 
+// Generate list of subsites for field group
 function get_subsites_for_search() {
 	$subsites = get_sites();
 	$array = array();
@@ -169,6 +173,7 @@ add_filter( 'searchwp\query\before', function( $query ) {
 
   }, 20, 2 );
 
+  // Generate list of post types for filter
   function uamswp_search_post_type_links() {
 	$engine  = new \SearchWP\Engine( 'default' );
 	$sources = array_keys( $engine->get_sources() );
@@ -183,9 +188,8 @@ add_filter( 'searchwp\query\before', function( $query ) {
 	} else {
 		$links .= '<li class="nav-item pr-2"><a class="" href="'. esc_url( remove_query_arg( 'type' ) ) .'">All</a></li> ';
 	}
-	// var_dump($sources);
+	
 	foreach ( $sources as $source ) :
-		// echo $source;
 		$flag = 'post' . SEARCHWP_SEPARATOR;
 		$post_name = substr( $source, strlen( $flag ) );
 		$post_type = get_post_type_object($post_name);
