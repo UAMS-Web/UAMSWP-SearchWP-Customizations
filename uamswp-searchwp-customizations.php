@@ -24,7 +24,7 @@ add_filter( 'searchwp\query\args', function( $args, $query ) {
 	$args['site'] = $search_sites;
 
 	// Retain site info in results.
-	$args['fields'] = 'default';
+	// $args['fields'] = 'default';
 
 	return $args;
 }, 10, 2 );
@@ -33,8 +33,8 @@ add_action('init', function() {
 	if( function_exists('acf_add_options_page') ):
 	
 			if ( 1 !== get_current_blog_id() ) {
-				  return $args;
-				}
+				return;
+			}
 	
 			acf_add_options_sub_page(array(
 				'page_title' => 'Multisite Search Settings',
@@ -51,7 +51,7 @@ add_action('init', function() {
 	if( function_exists('acf_add_local_field_group') ):
 	
 			if ( 1 !== get_current_blog_id() ) {
-			  return $args;
+			  return;
 			}
 	
 			acf_add_local_field_group(array(
