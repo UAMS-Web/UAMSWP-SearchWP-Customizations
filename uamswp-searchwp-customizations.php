@@ -25,12 +25,15 @@ add_filter( 'searchwp\query\args', function( $args, $query ) {
 
 	// Search sites listed in the settings.
 	$args['site'] = $search_sites;
+	
+	// Retain site info in results.
+	$args['fields'] = 'default';
 
 	return $args;
 }, 10, 2 );
 
 // Function to add ACF settings and fields
-add_action('init', function() {
+add_action('acf/init', function() {
 	// Add Settings Page
 	if( function_exists('acf_add_options_page') ):
 	
@@ -44,7 +47,7 @@ add_action('init', function() {
 				'menu_title' => 'UAMS Search Settings',
 				'capability' => 'manage_options',
 				'position' => '100',
-				'parent_slug' => 'searchwp-settings',
+				'parent_slug' => 'uamswp-settings',
 				'redirect' => false,
 			));
 		
@@ -173,8 +176,8 @@ add_filter( 'searchwp\query\before', function( $query ) {
 
   }, 20, 2 );
 
-  // Generate list of post types for filter
-  function uamswp_search_post_type_links() {
+// Generate list of post types for filter
+function uamswp_search_post_type_links() {
 	$engine  = new \SearchWP\Engine( 'default' );
 	$sources = array_keys( $engine->get_sources() );
 	$type = '';
@@ -193,15 +196,32 @@ add_filter( 'searchwp\query\before', function( $query ) {
 		$flag = 'post' . SEARCHWP_SEPARATOR;
 		$post_name = substr( $source, strlen( $flag ) );
 		$post_type = get_post_type_object($post_name);
-		$post_type_name = $post_type->labels->name;
+		// $post_type_name = $post_type->labels->name;
+		$source_type = $engine->get_source($source);
+		$source_label = $source_type->get_label();
+		// if ('KB Articles' === $source_label){
+		// 	$source_label = 'Knowlege Articles';
+		// }
+		// $label = $source_type['labels']['singular'];
+		$post_type_name = $source_label;
+		if ('Posts' == $post_type_name) {
+			$post_type_name = 'News';
+		}
 		if ( $type == $post_name ) {
 			$links .= '<li class="nav-item active pr-2 font-weight-bold">'. $post_type_name .'</li>';
 		} else {
 			$links .= '<li class="nav-item pr-2"><a class="" href="'. esc_url( add_query_arg( 'type', $post_name ) ) .'">'. $post_type_name .'</a></li>';
 		}
+		$links .= '<script>'. json_encode($source_type) . '</script>';
 	endforeach;
 	$links .= '</ul>';
 	return $links;
-  }
+}
 
-  
+add_filter( 'searchwp\source\attribute\label', function( $label, $args = array() ) {
+	if ( 'post.kb' === $args['source'] ) {
+	  return 'Knowledge Articles';
+	} else {
+	  return $label;
+	}
+}, 20, 2 );
