@@ -189,7 +189,7 @@ function uamswp_search_post_type_links() {
 	if ( empty( $type ) ) {
 		$links .= '<li class="nav-item active pr-2 font-weight-bold">All</li>';
 	} else {
-		$links .= '<li class="nav-item pr-2"><a class="" href="'. esc_url( remove_query_arg( 'type' ) ) .'">All</a></li> ';
+		$links .= '<li class="nav-item pr-2"><a class="" href="'. esc_url( remove_query_arg( 'type',  get_pagenum_link( 1, false ) ) ) .'">All</a></li> ';
 	}
 	
 	foreach ( $sources as $source ) :
@@ -210,7 +210,8 @@ function uamswp_search_post_type_links() {
 		if ( $type == $post_name ) {
 			$links .= '<li class="nav-item active pr-2 font-weight-bold">'. $post_type_name .'</li>';
 		} else {
-			$links .= '<li class="nav-item pr-2"><a class="" href="'. esc_url( add_query_arg( 'type', $post_name ) ) .'">'. $post_type_name .'</a></li>';
+			// $link = get_pagenum_link();
+			$links .= '<li class="nav-item pr-2"><a class="" href="'. esc_url( add_query_arg( 'type', $post_name, get_pagenum_link( 1, false ) ) ) .'">'. $post_type_name .'</a></li>';
 		}
 		$links .= '<script>'. json_encode($source_type) . '</script>';
 	endforeach;
