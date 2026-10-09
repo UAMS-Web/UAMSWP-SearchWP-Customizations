@@ -3,7 +3,7 @@
 Plugin Name: UAMSWP SearchWP Customizations 
 Plugin URI: https://www.uams.edu 
 Description: Customizations for SearchWP
-Version: 1.0
+Version: 1.0.0
 Author: Todd McKee, MEd 
 */
 // @link https://searchwp.com/documentation/multisite/
