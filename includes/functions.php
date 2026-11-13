@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use SearchWP\Engine;
 
-// Generate list of subsites for field group
+// Generate the list of subsites for the field group
 /**
  * @return non-falsy-string[]
  */
