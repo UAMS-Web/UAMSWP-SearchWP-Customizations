@@ -27,3 +27,9 @@ Developers:
 
 - Josh Daugherty
 - Todd McKee
+
+## License
+
+GPL-2.0-or-later. See [`LICENSE`](LICENSE).
+
+Copyright 2022 UAMS Web Services
