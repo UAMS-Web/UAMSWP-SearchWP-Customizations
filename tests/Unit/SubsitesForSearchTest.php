@@ -8,8 +8,9 @@
 
 declare(strict_types=1);
 
-use function Brain\Monkey\Functions\when;
 use Brain\Monkey\Functions;
+
+use function Brain\Monkey\Functions\when;
 
 it('labels each site with its name and ID, keyed by blog ID', function (): void {
     Functions\expect('get_sites')
