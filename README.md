@@ -18,3 +18,11 @@ Before a pull request, run the shared local CI runner:
 ```bash
 node .claude/skills/local-ci/local-ci.mjs
 ```
+
+## Credits
+
+Developed and maintained by UAMS Web Services.
+
+Developers:
+
+- Todd McKee
