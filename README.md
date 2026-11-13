@@ -25,4 +25,5 @@ Developed and maintained by UAMS Web Services.
 
 Developers:
 
+- Josh Daugherty
 - Todd McKee
