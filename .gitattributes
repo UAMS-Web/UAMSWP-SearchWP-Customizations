@@ -2,3 +2,4 @@
 /.* export-ignore
 /uamswp-searchwp-customizations.php -export-ignore
 /LICENSE -export-ignore
+/includes -export-ignore

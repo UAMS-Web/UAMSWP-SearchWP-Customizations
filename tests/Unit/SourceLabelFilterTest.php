@@ -1,0 +1,27 @@
+<?php
+
+/**
+ * The `searchwp\source\attribute\label` filter.
+ *
+ * @see uamswp-searchwp-customizations.php
+ */
+
+declare(strict_types=1);
+
+function uamswp_source_label(string $label, array $args): string
+{
+    return uamswp_registered_hook('searchwp\source\attribute\label')['callback']($label, $args);
+}
+
+it('renames the knowledge base source', function (): void {
+    expect(uamswp_source_label('KB Articles', ['source' => 'post.kb']))->toBe('Knowledge Articles');
+});
+
+it('keeps the label for every other source', function (string $source): void {
+    expect(uamswp_source_label('Some label', ['source' => $source]))->toBe('Some label');
+})->with([
+    'posts' => ['post.post'],
+    'pages' => ['post.page'],
+    'near miss' => ['post.kbx'],
+    'empty' => [''],
+]);

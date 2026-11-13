@@ -60,6 +60,7 @@ parameters:
     # bugs. In a fork of a vendor plugin, only the paths that hold our
     # modifications.
     paths:
+        - includes
         - uamswp-searchwp-customizations.php
         - tests
 
@@ -72,6 +73,10 @@ parameters:
     excludePaths:
         analyse:
             - tests/Integration/vendor (?)
+
+    # Patchwork's functions, which the Unit bootstrap and tests/Support/hooks.php call.
+    scanFiles:
+        - vendor/antecedent/patchwork/Patchwork.php
 
     # Indexed for symbols but not analyzed. `php-stubs/wordpress-stubs` covers
     # core's runtime surface and stops there: `WP_UnitTestCase`, the factories
@@ -156,18 +161,14 @@ parameters:
         -
             identifier: function.notFound
             message: '#^Function (get_field|acf_add_options_sub_page) not found\.$#'
-            path: uamswp-searchwp-customizations.php
-        -
-            identifier: class.notFound
-            message: '#SearchWP\\(Utils|Engine)#'
-            path: uamswp-searchwp-customizations.php
+            path: includes/hooks.php
         # Real finding, kept for its own ticket: the `searchwp\query\before`
         # callback returns early with no value when the `type` query variable is
         # absent. Fixing it changes what the filter returns, which this adoption
         # does not do.
         -
             identifier: return.missing
-            path: uamswp-searchwp-customizations.php
+            path: includes/hooks.php
         # The entry most plugins need once the level reaches 4, from
         # aether-wordpress-migration-api: the PHP version guard in the plugin header.
         # PHPStan analyzes at the `min` above, so

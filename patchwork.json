@@ -1,0 +1,5 @@
+{
+    "redefinable-internals": ["class_exists", "function_exists"],
+    "blacklist": ["vendor"],
+    "whitelist": ["vendor/brain"]
+}

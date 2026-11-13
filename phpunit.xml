@@ -22,6 +22,7 @@
     </testsuites>
     <source>
         <include>
+            <directory suffix=".php">./includes</directory>
             <file>./uamswp-searchwp-customizations.php</file>
         </include>
     </source>
