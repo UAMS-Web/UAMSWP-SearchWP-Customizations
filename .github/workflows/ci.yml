@@ -4,7 +4,7 @@ name: CI
 # adds the one job a ruleset requires, `CI`, which fails unless the call reports `success`.
 # Template: .claude/skills/code-quality/templates/ci.yml in UAMS-Web/uams-claude-skills.
 # This repository is public, so there is no RUN_REMOTE_CI gate. Mutation is on: a pull request mutates only
-# the PHP files it changes under `mutate-paths`, and a manual run mutates everything `composer mutate` covers.
+# the PHP files it changes under `mutate-paths`, and a manual or scheduled run mutates everything `composer mutate` covers.
 # The download-archive and phpcs jobs are off: the plugin has no phpcs setup, and its download
 # archive check has its own ticket.
 
@@ -14,12 +14,12 @@ on:
     branches: [main]
   # Lets the workflow be run on demand against a branch.
   workflow_dispatch:
-  # The mutate job mutates only the changed files on a pull request and on a push, and everything on a scheduled
-  # or manual run, under the `mutate-full-timeout-minutes` input (default 180). To catch drift from a dependency
-  # or tooling change, uncomment a schedule (UAMS-Web/uams-claude-skills#532). A schedule runs on the default
-  # branch, and GitHub disables it after 60 days without repository activity.
-  # schedule:
-  #   - cron: '17 7 * * 1'
+  # The weekly full mutation pass: a scheduled run mutates everything `composer mutate` covers,
+  # which catches drift from a dependency or tooling change that no pull request touches. A
+  # schedule runs on the default branch, and GitHub disables it after 60 days without
+  # repository activity. Mondays at 07:17 UTC.
+  schedule:
+    - cron: '17 7 * * 1'
 
 # A new push to a pull request cancels that pull request's stale run, so a pull request keeps
 # one group. Every other run (a push to the default branch, a manual run) gets a group of its
