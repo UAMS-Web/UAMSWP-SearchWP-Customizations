@@ -12,6 +12,10 @@ Version: 1.0.0
 Requires PHP: 8.2
 Author: UAMS Web Services
 Author URI: https://communications.uams.edu/web/
+License: GPL-2.0-or-later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+
+Copyright 2022 UAMS Web Services
 */
 // @link https://searchwp.com/documentation/multisite/
 // Tell SearchWP to search the entire Multisite network when searching on the main site.

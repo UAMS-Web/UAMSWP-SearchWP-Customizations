@@ -1,11 +1,4 @@
-/vendor/ export-ignore
-/tests/ export-ignore
-/phpunit.xml export-ignore
-/composer.json export-ignore
-/composer.lock export-ignore
-/local-ci.json export-ignore
-/rector.php export-ignore
-/rector-sweep.php export-ignore
-/phpstan.neon.dist export-ignore
-/pint.json export-ignore
-/.git-blame-ignore-revs export-ignore
+/* export-ignore
+/.* export-ignore
+/uamswp-searchwp-customizations.php -export-ignore
+/LICENSE -export-ignore
