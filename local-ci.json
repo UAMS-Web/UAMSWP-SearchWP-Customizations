@@ -40,6 +40,36 @@
         "composer.json",
         "composer.lock"
       ]
+    },
+    {
+      "name": "pint",
+      "run": "vendor/bin/pint --test",
+      "paths": [
+        "**/*.php",
+        "!vendor/**",
+        "pint.json",
+        "composer.lock"
+      ]
+    },
+    {
+      "name": "rector",
+      "run": "vendor/bin/rector --dry-run",
+      "paths": [
+        "**/*.php",
+        "!vendor/**",
+        "rector.php",
+        "composer.lock"
+      ]
+    },
+    {
+      "name": "phpstan",
+      "run": "composer stan",
+      "paths": [
+        "**/*.php",
+        "!vendor/**",
+        "phpstan.neon*",
+        "composer.lock"
+      ]
     }
   ]
 }
