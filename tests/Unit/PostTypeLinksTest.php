@@ -91,8 +91,10 @@ it('shows the Posts source as News, whether it is linked or active', function ()
     $_GET['type'] = 'post';
     uamswp_set_sources(['post.post' => 'Posts']);
 
-    expect(uamswp_search_post_type_links())->toContain('<li class="nav-item active pr-2 font-weight-bold">News</li>')
-        ->not->toContain('>Posts<');
+    $html = uamswp_search_post_type_links();
+
+    expect($html)->toContain('<li class="nav-item active pr-2 font-weight-bold">News</li>');
+    expect(str_contains($html, '>Posts<'))->toBeFalse();
 });
 
 it('keeps every other label as SearchWP gave it', function (): void {
