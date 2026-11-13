@@ -44,8 +44,6 @@ function uamswp_search_post_type_links(): string
         // @pest-mutate-ignore:ConcatSwitchSides
         $flag = 'post'.SEARCHWP_SEPARATOR;
         $post_name = substr($source, strlen($flag));
-        $post_type = get_post_type_object($post_name);
-        // $post_type_name = $post_type->labels->name;
         $source_type = $engine->get_source($source);
         $source_label = $source_type->get_label();
         // if ('KB Articles' === $source_label){

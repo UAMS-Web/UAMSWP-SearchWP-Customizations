@@ -33,13 +33,14 @@ function uamswp_source(string $name): object
  */
 function uamswp_query(array $sourceNames, array &$removed): object
 {
-    $engine = new class(array_map(uamswp_source(...), $sourceNames), $removed)
+    $record = function (string $name) use (&$removed): void {
+        $removed[] = $name;
+    };
+
+    $engine = new class(array_map(uamswp_source(...), $sourceNames), $record)
     {
-        /**
-         * @param  list<object>  $sources
-         * @param  list<string>  $removed
-         */
-        public function __construct(private readonly array $sources, private array &$removed) {}
+        /** @param list<object> $sources */
+        public function __construct(private readonly array $sources, private readonly Closure $record) {}
 
         /** @return list<object> */
         public function get_sources(): array
@@ -49,7 +50,7 @@ function uamswp_query(array $sourceNames, array &$removed): object
 
         public function remove_source(string $name): void
         {
-            $this->removed[] = $name;
+            ($this->record)($name);
         }
     };
 
