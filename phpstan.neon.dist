@@ -69,9 +69,9 @@ parameters:
     # this, PHPStan analyzes PHPUnit 9 and its dependencies as if they were the
     # repository's code. Uncomment when tests/Integration has its own
     # composer.json.
-    # excludePaths:
-    #     analyse:
-    #         - tests/Integration/vendor
+    excludePaths:
+        analyse:
+            - tests/Integration/vendor (?)
 
     # Indexed for symbols but not analyzed. `php-stubs/wordpress-stubs` covers
     # core's runtime surface and stops there: `WP_UnitTestCase`, the factories

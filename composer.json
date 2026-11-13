@@ -3,6 +3,9 @@
     "description": "Customizations for SearchWP on the UAMS Health WordPress multisite.",
     "type": "wordpress-plugin",
     "license": "proprietary",
+    "require": {
+        "php": ">=8.2"
+    },
     "require-dev": {
         "brain/monkey": "^2.7",
         "laravel/pint": "^1.32",

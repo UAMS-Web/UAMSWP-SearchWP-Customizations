@@ -9,6 +9,7 @@ Plugin Name: UAMSWP SearchWP Customizations
 Plugin URI: https://www.uams.edu
 Description: Customizations for SearchWP
 Version: 1.0.0
+Requires PHP: 8.2
 Author: UAMS Web Services
 Author URI: https://communications.uams.edu/web/
 */
