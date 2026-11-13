@@ -1,4 +1,7 @@
 <?php
+use SearchWP\Utils;
+use SearchWP\Engine;
+
 /*
 Plugin Name: UAMSWP SearchWP Customizations 
 Plugin URI: https://www.uams.edu 
@@ -15,18 +18,18 @@ add_filter( 'searchwp\query\args', function( $args, $query ) {
 	  return $args;
 	}
 
-	$search_sites = array();
+	$search_sites = [];
 	if( class_exists('ACF') ) {
 		$search_sites = get_field('uams_searchwp_sites', 'option');
 	}
-	
+
 	if (empty( $search_sites )) {
 		$search_sites = [1];
 	}
 
 	// Search sites listed in the settings.
 	$args['site'] = $search_sites;
-	
+
 	// Retain site info in results.
 	$args['fields'] = 'default';
 
@@ -34,15 +37,14 @@ add_filter( 'searchwp\query\args', function( $args, $query ) {
 }, 10, 2 );
 
 // Function to add ACF settings and fields
-add_action('acf/init', function() {
+add_action('acf/init', function(): void {
 	// Add Settings Page
-	if( function_exists('acf_add_options_page') ):
-	
-			if ( 1 !== get_current_blog_id() ) {
+	if (function_exists('acf_add_options_page')) {
+        if ( 1 !== get_current_blog_id() ) {
 				return;
 			}
-	
-			acf_add_options_sub_page(array(
+
+        acf_add_options_sub_page([
 				'page_title' => 'Multisite Search Settings',
 				'menu_slug' => 'uamswp-searchwp-sites',
 				'menu_title' => 'UAMS Search Settings',
@@ -50,22 +52,20 @@ add_action('acf/init', function() {
 				'position' => '100',
 				'parent_slug' => 'uamswp-settings',
 				'redirect' => false,
-			));
-		
-	endif;
-	
+			]);
+    }
+
 	// Add Search field group
-	if( function_exists('acf_add_local_field_group') ):
-	
-			if ( 1 !== get_current_blog_id() ) {
+	if (function_exists('acf_add_local_field_group')) {
+        if ( 1 !== get_current_blog_id() ) {
 			  return;
 			}
-	
-			acf_add_local_field_group(array(
+
+        acf_add_local_field_group([
 				'key' => 'group_uamswp_subsite_search',
 				'title' => 'UAMS Subsite Search',
-				'fields' => array(
-					array(
+				'fields' => [
+					[
 						'key' => 'field_uams_searchwp_sites',
 						'label' => 'Sites to include',
 						'name' => 'uams_searchwp_sites',
@@ -73,22 +73,22 @@ add_action('acf/init', function() {
 						'instructions' => 'Sites to include in the search. Leave ',
 						'required' => 0,
 						'conditional_logic' => 0,
-						'wrapper' => array(
+						'wrapper' => [
 							'width' => '',
 							'class' => '',
 							'id' => '',
-						),
+						],
 						'choices' => get_subsites_for_search(),
 						'allow_custom' => 0,
-						'default_value' => array(
+						'default_value' => [
 							1 => get_bloginfo( 'name' ),
-						),
+						],
 						'layout' => 'vertical',
 						'toggle' => 0,
 						'return_format' => 'value',
 						'save_custom' => 0,
-					),
-					array(
+					],
+					[
 						'key' => 'field_uams_searchwp_results_per_page',
 						'label' => 'Results per page',
 						'name' => 'uams_searchwp_results_per_page',
@@ -96,11 +96,11 @@ add_action('acf/init', function() {
 						'instructions' => '',
 						'required' => 0,
 						'conditional_logic' => 0,
-						'wrapper' => array(
+						'wrapper' => [
 							'width' => '',
 							'class' => '',
 							'id' => '',
-						),
+						],
 						'default_value' => 20,
 						'placeholder' => '',
 						'prepend' => '',
@@ -108,17 +108,17 @@ add_action('acf/init', function() {
 						'min' => 5,
 						'max' => 30,
 						'step' => 1,
-					),
-				),
-				'location' => array(
-					array(
-						array(
+					],
+				],
+				'location' => [
+					[
+						[
 							'param' => 'options_page',
 							'operator' => '==',
 							'value' => 'uamswp-searchwp-sites',
-						),
-					),
-				),
+						],
+					],
+				],
 				'menu_order' => 0,
 				'position' => 'normal',
 				'style' => 'default',
@@ -128,36 +128,40 @@ add_action('acf/init', function() {
 				'active' => true,
 				'description' => '',
 				'show_in_rest' => 0,
-			));
-		
-	endif;
+			]);
+    }
 });
 
 // Generate list of subsites for field group
-function get_subsites_for_search() {
+/**
+ * @return non-falsy-string[]
+ */
+function get_subsites_for_search(): array {
 	$subsites = get_sites();
-	$array = array();
+	$array = [];
 	foreach( $subsites as $subsite ) {
 		$subsite_id = get_object_vars($subsite)["blog_id"];
 		$subsite_name = get_blog_details($subsite_id)->blogname;
 		$array[$subsite_id] = $subsite_name . ' (ID: '.$subsite_id.')';
 	}
+
 	return $array;
 }
 
 // Set results per page for SearchWP results.
 add_filter( 'searchwp\query\per_page', function( $per_page, $args ) {
 	$results_per_page = get_field('uams_searchwp_results_per_page', 'option');
-	
+
 	// Default value
 	if (empty( $results_per_page )) {
 		$results_per_page = 20;
 	}
+
     return $results_per_page;
 }, 30, 2 );
 
 // Conditionally remove a SearchWP Engine Source.
-add_filter( 'searchwp\query\before', function( $query ) {
+add_filter( 'searchwp\query\before', function( $query ): void {
 	// Applies only if `type` GET variable exists.
 	if ( ! isset( $_GET['type'] ) ) {
 	  return;
@@ -170,7 +174,7 @@ add_filter( 'searchwp\query\before', function( $query ) {
 		$source_name = substr( $source->get_name(), strlen( $flag ) ); 
 		if ( $type !== $source_name ){
 			// Remove Posts from Engine.
-			$source_name = \SearchWP\Utils::get_post_type_source_name( $source_name );
+			$source_name = Utils::get_post_type_source_name( $source_name );
 			$query->get_engine()->remove_source( $source_name );
 		}
 	}
@@ -178,21 +182,22 @@ add_filter( 'searchwp\query\before', function( $query ) {
   }, 20, 2 );
 
 // Generate list of post types for filter
-function uamswp_search_post_type_links() {
-	$engine  = new \SearchWP\Engine( 'default' );
+function uamswp_search_post_type_links(): string {
+	$engine  = new Engine( 'default' );
 	$sources = array_keys( $engine->get_sources() );
 	$type = '';
-	
+
 	if ( isset( $_GET['type'] ) ) {
 		$type = sanitize_text_field( $_GET['type'] );
 	}
+
 	$links = '<ul class="nav">';
 	if ( empty( $type ) ) {
 		$links .= '<li class="nav-item active pr-2 font-weight-bold">All</li>';
 	} else {
 		$links .= '<li class="nav-item pr-2"><a class="" href="'. esc_url( remove_query_arg( 'type',  get_pagenum_link( 1, false ) ) ) .'">All</a></li> ';
 	}
-	
+
 	foreach ( $sources as $source ) :
 		$flag = 'post' . SEARCHWP_SEPARATOR;
 		$post_name = substr( $source, strlen( $flag ) );
@@ -208,22 +213,25 @@ function uamswp_search_post_type_links() {
 		if ('Posts' == $post_type_name) {
 			$post_type_name = 'News';
 		}
+
 		if ( $type == $post_name ) {
 			$links .= '<li class="nav-item active pr-2 font-weight-bold">'. $post_type_name .'</li>';
 		} else {
 			// $link = get_pagenum_link();
 			$links .= '<li class="nav-item pr-2"><a class="" href="'. esc_url( add_query_arg( 'type', $post_name, get_pagenum_link( 1, false ) ) ) .'">'. $post_type_name .'</a></li>';
 		}
+
 		$links .= '<script>'. json_encode($source_type) . '</script>';
 	endforeach;
+
 	$links .= '</ul>';
 	return $links;
 }
 
-add_filter( 'searchwp\source\attribute\label', function( $label, $args = array() ) {
+add_filter( 'searchwp\source\attribute\label', function( $label, $args = [] ) {
 	if ( 'post.kb' === $args['source'] ) {
 	  return 'Knowledge Articles';
-	} else {
-	  return $label;
 	}
+
+    return $label;
 }, 20, 2 );

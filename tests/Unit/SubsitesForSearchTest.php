@@ -8,6 +8,7 @@
 
 declare(strict_types=1);
 
+use function Brain\Monkey\Functions\when;
 use Brain\Monkey\Functions;
 
 it('labels each site with its name and ID, keyed by blog ID', function (): void {
@@ -31,7 +32,7 @@ it('labels each site with its name and ID, keyed by blog ID', function (): void 
 });
 
 it('returns an empty list when there are no sites', function (): void {
-    Functions\when('get_sites')->justReturn([]);
+    when('get_sites')->justReturn([]);
 
     expect(get_subsites_for_search())->toBe([]);
 });
