@@ -117,7 +117,7 @@ return RectorConfig::configure()
         // WordPress repositories whose Integration suite has its own Composer
         // setup (the tests skill): its vendor/ sits inside tests/, and Rector
         // would otherwise rewrite PHPUnit 9 and its dependencies. Uncomment.
-        // __DIR__.'/tests/Integration/vendor',
+        __DIR__.'/tests/Integration/vendor',
         ...$neverRules,
         ...($isSweepProfile ? [] : $sweepOnlyRules),
     ])
@@ -145,9 +145,7 @@ return RectorConfig::configure()
     // composer.json to determine your PHP version" (Rector 2.6.7,
     // RectorConfigBuilder::withPhpSets()). So composer.json carries
     // `"require": {"php": ">=<floor>"}`, the same floor as the line above.
-    // No `require.php` in composer.json yet (the floor ticket adds it), so the set is named
-    // explicitly instead of read from there.
-    ->withPhpSets(php82: true)
+    ->withPhpSets()
     // Laravel and Statamic repositories: uncomment the call below after
     // `composer require --dev driftingly/rector-laravel`.
     //
