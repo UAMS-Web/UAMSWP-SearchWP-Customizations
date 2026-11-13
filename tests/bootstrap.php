@@ -9,8 +9,7 @@
 
 declare(strict_types=1);
 
-use function Brain\Monkey\setUp;
-use function Brain\Monkey\tearDown;
+use function Patchwork\redefine;
 
 require_once __DIR__.'/../vendor/autoload.php';
 
@@ -30,18 +29,14 @@ if (! defined('ABSPATH')) {
 }
 
 /*
- * The plugin defines its functions and registers its hooks in one file, so the
- * file is loaded inside a single Brain Monkey session: add_action() and
- * add_filter() exist during it, and the registrations are discarded when it
- * ends. The functions the file defines outlive the session. Nothing in the
- * file calls another WordPress function while loading, so no stubs are needed.
- *
- * Splitting the definitions from the registrations is the first change this
- * harness should pin before making (UAMS-Web/uams-claude-skills tests skill,
- * "Pinning legacy behavior before a change").
+ * Load the files that DEFINE the plugin's functions, never the main plugin file: it
+ * registers hooks at file scope, and Brain Monkey's add_action() and add_filter()
+ * exist only inside a test. Tests that need the registrations load the main file
+ * themselves (tests/Support/hooks.php).
  */
-setUp();
-require_once __DIR__.'/../uamswp-searchwp-customizations.php';
-tearDown();
+require_once __DIR__.'/Support/searchwp.php';
+require_once __DIR__.'/Support/hooks.php';
+require_once __DIR__.'/../includes/functions.php';
+require_once __DIR__.'/../includes/hooks.php';
 
 // cspell:ignore ABSPATH uamswp

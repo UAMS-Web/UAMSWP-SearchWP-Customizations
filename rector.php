@@ -108,6 +108,7 @@ $neverRules = [];
 return RectorConfig::configure()
     // First-party PHP: the tests, plus the plugin file at the root (withRootFiles()).
     ->withPaths([
+        __DIR__.'/includes',
         __DIR__.'/tests',
     ])
     // WordPress plugins: also analyze the PHP files at the repository root (the
