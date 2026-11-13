@@ -1,0 +1,71 @@
+name: CI
+
+# Calls the shared job chain in UAMS-Web/uams-ci-workflows at a release tag (never a branch) and
+# adds the one job a ruleset requires, `CI`, which fails unless the call reports `success`.
+# Template: .claude/skills/code-quality/templates/ci.yml in UAMS-Web/uams-claude-skills.
+# This repository is public, so there is no RUN_REMOTE_CI gate. Mutation is off until its own ticket.
+# The download-archive and phpcs jobs are off: the plugin has no phpcs setup, and its download
+# archive check has its own ticket.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  # Lets the workflow be run on demand against a branch.
+  workflow_dispatch:
+  # The mutate job mutates only the changed files on a pull request and on a push, and everything on a scheduled
+  # or manual run, under the `mutate-full-timeout-minutes` input (default 180). To catch drift from a dependency
+  # or tooling change, uncomment a schedule (UAMS-Web/uams-claude-skills#532). A schedule runs on the default
+  # branch, and GitHub disables it after 60 days without repository activity.
+  # schedule:
+  #   - cron: '17 7 * * 1'
+
+# A new push to a pull request cancels that pull request's stale run, so a pull request keeps
+# one group. Every other run (a push to the default branch, a manual run) gets a group of its
+# own, keyed on the commit, so a later push never cancels it. A shared push group would: GitHub
+# keeps one running and one pending run per group and cancels the pending one when another is
+# queued, whatever `cancel-in-progress` says, so a merge landing during a long run would cancel
+# the previous merge's run before it started a job. Its commit would show a short, settled run
+# and the chain would never have run on it.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  # The shared chain. Its checks report as `checks / <job name> (<operating system>)`.
+  checks:
+    uses: UAMS-Web/uams-ci-workflows/.github/workflows/ci.yml@v0.10.1
+    with:
+      linux-only: true
+      mutate: false
+      floor-lint: true
+      floor-lint-php: '8.2'
+      floor-lint-command: git ls-files -z -- '*.php' ':(exclude)tests' | xargs -0 -n1 php -l > /dev/null
+      pest-command: composer test:unit
+
+  # The one check a ruleset requires from this workflow. Keep `needs:` naming the call;
+  # scripts/check-templates.mjs in UAMS-Web/uams-claude-skills checks it.
+  ci:
+    name: CI
+    needs: [checks]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      # `skipped` and `cancelled` fail as well as `failure`: a call that did not run proved nothing.
+      - name: Every needed job succeeded
+        env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          echo "Needed job results: $RESULTS"
+          # An empty list (an emptied `needs:`, a dropped `env:`) would run no iterations and pass having read nothing.
+          if [ -z "$RESULTS" ]; then echo "::error::No needed job results to read"; exit 1; fi
+          for result in $RESULTS; do
+            if [ "$result" != "success" ]; then
+              echo "::error::A needed job reported $result"
+              exit 1
+            fi
+          done
