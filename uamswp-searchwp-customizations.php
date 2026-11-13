@@ -4,7 +4,7 @@ Plugin Name: UAMSWP SearchWP Customizations
 Plugin URI: https://www.uams.edu 
 Description: Customizations for SearchWP
 Version: 1.0.0
-Author: Todd McKee, MEd 
+Author: UAMS Web Services
 */
 // @link https://searchwp.com/documentation/multisite/
 // Tell SearchWP to search the entire Multisite network when searching on the main site.
