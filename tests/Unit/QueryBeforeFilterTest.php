@@ -35,7 +35,10 @@ function uamswp_query(array $sourceNames, array &$removed): object
 {
     $engine = new class(array_map(uamswp_source(...), $sourceNames), $removed)
     {
-        /** @param list<object> $sources */
+        /**
+         * @param  list<object>  $sources
+         * @param  list<string>  $removed
+         */
         public function __construct(private readonly array $sources, private array &$removed) {}
 
         /** @return list<object> */
