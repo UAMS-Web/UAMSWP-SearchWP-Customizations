@@ -33,7 +33,8 @@
         "test:refactor": "rector --dry-run",
         "test:refactor:sweep": "rector --dry-run --clear-cache --config=rector-sweep.php",
         "pint": "pint",
-        "test:pint": "pint --test"
+        "test:pint": "pint --test",
+        "mutate": "php -d pcov.directory=. vendor/bin/pest tests/Unit/AcfInitTest.php tests/Unit/HookRegistrationTest.php tests/Unit/PostTypeLinksTest.php tests/Unit/QueryArgsFilterTest.php tests/Unit/QueryBeforeFilterTest.php tests/Unit/ResultsPerPageFilterTest.php tests/Unit/SourceLabelFilterTest.php tests/Unit/SubsitesForSearchTest.php --mutate --path=includes,uamswp-searchwp-customizations.php"
     },
     "scripts-descriptions": {
         "test": "Run the test suite.",
@@ -44,6 +45,7 @@
         "test:refactor": "Preview Rector's gating profile.",
         "test:refactor:sweep": "Preview Rector's sweep profile.",
         "pint": "Format with Pint.",
-        "test:pint": "Check formatting with Pint."
+        "test:pint": "Check formatting with Pint.",
+        "mutate": "Run the mutation pass over the plugin's first-party PHP."
     }
 }
