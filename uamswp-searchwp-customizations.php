@@ -5,6 +5,7 @@ Plugin URI: https://www.uams.edu
 Description: Customizations for SearchWP
 Version: 1.0.0
 Author: UAMS Web Services
+Author URI: https://communications.uams.edu/web/
 */
 // @link https://searchwp.com/documentation/multisite/
 // Tell SearchWP to search the entire Multisite network when searching on the main site.
