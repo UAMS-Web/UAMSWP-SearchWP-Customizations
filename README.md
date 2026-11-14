@@ -13,10 +13,13 @@ composer test
 
 `composer test` runs `vendor/bin/pest`. Tests live in `tests/Unit/` and are named `*Test.php`. The Composer dependencies are for development only; none ship with the plugin.
 
-Before a pull request, run the shared local CI runner:
+CI runs every check on each pull request. To run the main ones before opening it:
 
 ```bash
-node .claude/skills/local-ci/local-ci.mjs
+composer test
+composer test:pint
+composer test:refactor
+composer stan
 ```
 
 ## Credits
