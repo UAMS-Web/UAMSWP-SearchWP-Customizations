@@ -11,9 +11,14 @@
 declare(strict_types=1);
 
 namespace SearchWP {
+    abstract class Source
+    {
+        abstract public function get_label(): string;
+    }
+
     final class Engine
     {
-        /** @var array<string, object> */
+        /** @var array<string, Source> */
         public static array $sources = [];
 
         public static ?string $constructedWith = null;
@@ -23,13 +28,13 @@ namespace SearchWP {
             self::$constructedWith = $name;
         }
 
-        /** @return array<string, object> */
+        /** @return array<string, Source> */
         public function get_sources(): array
         {
             return self::$sources;
         }
 
-        public function get_source(string $name): object
+        public function get_source(string $name): Source
         {
             return self::$sources[$name];
         }

@@ -14,8 +14,13 @@ function get_subsites_for_search(): array
     $array = [];
     foreach ($subsites as $subsite) {
         $subsite_id = get_object_vars($subsite)['blog_id'];
-        $subsite_name = get_blog_details($subsite_id)->blogname;
-        $array[$subsite_id] = $subsite_name.' (ID: '.$subsite_id.')';
+        $details = get_blog_details($subsite_id);
+        // get_blog_details() returns false when the site's details cannot be read, for example a site deleted since get_sites() ran.
+        if ($details === false) {
+            continue;
+        }
+
+        $array[$subsite_id] = $details->blogname.' (ID: '.$subsite_id.')';
     }
 
     return $array;
@@ -51,9 +56,7 @@ function uamswp_search_post_type_links(): string
         // }
         // $label = $source_type['labels']['singular'];
         $post_type_name = $source_label;
-        // Equivalent mutant: 'Posts' is not a numeric string, so == and === agree for the string get_label() returns.
-        // @pest-mutate-ignore:EqualToIdentical
-        if ($post_type_name == 'Posts') {
+        if ($post_type_name === 'Posts') {
             $post_type_name = 'News';
         }
 

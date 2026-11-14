@@ -21,7 +21,7 @@ use function Patchwork\restore;
  * Must run inside a test: it needs Brain Monkey's add_filter() and add_action() to exist.
  * Each call loads the file again, which registers the hooks again.
  *
- * @return array<string, list<array{callback: Closure, priority: int, accepted_args: int}>>
+ * @return array<string, list<array{callback: callable, priority: int, accepted_args: int}>>
  */
 function uamswp_registered_hooks(): array
 {
@@ -50,7 +50,7 @@ function uamswp_registered_hooks(): array
 }
 
 /**
- * @return array{callback: Closure, priority: int, accepted_args: int}
+ * @return array{callback: callable, priority: int, accepted_args: int}
  */
 function uamswp_registered_hook(string $hook): array
 {

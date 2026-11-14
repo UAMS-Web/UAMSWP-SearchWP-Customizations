@@ -9,6 +9,7 @@
 declare(strict_types=1);
 
 use SearchWP\Engine;
+use SearchWP\Source;
 
 use function Brain\Monkey\Functions\stubEscapeFunctions;
 use function Brain\Monkey\Functions\when;
@@ -21,7 +22,7 @@ function uamswp_set_sources(array $labelsByName): void
     Engine::$sources = [];
 
     foreach ($labelsByName as $name => $label) {
-        Engine::$sources[$name] = new class($label)
+        Engine::$sources[$name] = new class($label) extends Source
         {
             public function __construct(public string $label) {}
 
