@@ -13,7 +13,7 @@ function get_subsites_for_search(): array
     $subsites = get_sites();
     $array = [];
     foreach ($subsites as $subsite) {
-        $subsite_id = get_object_vars($subsite)['blog_id'];
+        $subsite_id = $subsite->blog_id;
         $details = get_blog_details($subsite_id);
         // get_blog_details() returns false when the site's details cannot be read, for example a site deleted since get_sites() ran.
         if ($details === false) {
@@ -33,7 +33,8 @@ function uamswp_search_post_type_links(): string
     $sources = array_keys($engine->get_sources());
     $type = '';
 
-    if (isset($_GET['type'])) {
+    // A non-string value (`?type[]=x`) reads as no type, which is what sanitize_text_field() returns for an array.
+    if (isset($_GET['type']) && is_string($_GET['type'])) {
         $type = sanitize_text_field($_GET['type']);
     }
 

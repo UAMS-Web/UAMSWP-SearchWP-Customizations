@@ -8,6 +8,7 @@
 
 declare(strict_types=1);
 
+use Brain\Monkey\Functions;
 use SearchWP\Engine;
 use SearchWP\Source;
 
@@ -115,6 +116,14 @@ it('sanitizes the type it reads', function (): void {
 
     expect(uamswp_search_post_type_links())->toContain('<li class="nav-item active pr-2 font-weight-bold">Pages</li>')
         ->and($seen)->toBe(['<script>page']);
+});
+
+it('treats a type given as an array as no type, without sanitizing it', function (): void {
+    $_GET['type'] = ['page'];
+    Functions\expect('sanitize_text_field')->never();
+    uamswp_set_sources(['post.page' => 'Pages']);
+
+    expect(uamswp_search_post_type_links())->toStartWith('<ul class="nav"><li class="nav-item active pr-2 font-weight-bold">All</li>');
 });
 
 it('treats a type that is empty after sanitizing as no type', function (string $type): void {

@@ -150,7 +150,8 @@ function uamswp_searchwp_customizations_register_hooks(): void
             return;
         }
 
-        $type = sanitize_text_field($_GET['type']);
+        // A non-string value (`?type[]=x`) reads as an empty type, which is what sanitize_text_field() returns for an array.
+        $type = is_string($_GET['type']) ? sanitize_text_field($_GET['type']) : '';
 
         foreach ($query->get_engine()->get_sources() as $source) {
             // Equivalent mutant: only strlen($flag) is used, and swapping the two operands of the concatenation does not change its length.
