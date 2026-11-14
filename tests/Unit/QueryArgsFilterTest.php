@@ -20,7 +20,14 @@ use function Brain\Monkey\Functions\when;
  */
 function uamswp_query_args(array $args): array
 {
-    return uamswp_registered_hook('searchwp\query\args')['callback']($args, new stdClass);
+    $result = uamswp_registered_hook('searchwp\query\args')['callback']($args, new stdClass);
+
+    if (! is_array($result)) {
+        throw new UnexpectedValueException('The searchwp\query\args callback must return an array.');
+    }
+
+    /** @var array<string, mixed> $result */
+    return $result;
 }
 
 it('leaves the arguments alone on any site but the first', function (): void {

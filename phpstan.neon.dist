@@ -53,7 +53,7 @@ parameters:
     # from 0 upward (see the code-quality skill), then raise it by one per
     # change as findings are fixed, until `max`. Lowering it is a deliberate,
     # argued change, not a quiet edit to get a red run green.
-    level: 9
+    level: 10
 
     # The directories and files holding first-party PHP, including
     # the plugin header file at the root. Include tests: test bugs are real
@@ -77,6 +77,7 @@ parameters:
     # Patchwork's functions, which the Unit bootstrap and tests/Support/hooks.php call.
     scanFiles:
         - vendor/antecedent/patchwork/Patchwork.php
+        - vendor/antecedent/patchwork/src/CallRerouting/Handle.php
 
     # Indexed for symbols but not analyzed. `php-stubs/wordpress-stubs` covers
     # core's runtime surface and stops there: `WP_UnitTestCase`, the factories
@@ -161,7 +162,23 @@ parameters:
         -
             identifier: function.notFound
             message: '#^Function (get_field|acf_add_options_sub_page) not found\.$#'
-            path: includes/hooks.php
+            paths:
+                - includes/functions.php
+                - includes/hooks.php
+        # `searchwp\query\args` is registered with two arguments (SearchWP passes
+        # the query second), so the callback declares the second parameter and
+        # does not read it. Registering it with one would change what WordPress
+        # hands the callback.
+        -
+            identifier: function.unusedParameter
+            message: '#^Function uamswp_searchwp_query_args\(\) has an unused parameter \$query\.$#'
+            path: includes/functions.php
+        # Pest binds `$this` inside `uses()->afterEach()` closures at runtime,
+        # which PHPStan sees as `mixed`.
+        -
+            identifier: method.nonObject
+            message: '#^Cannot call method addToAssertionCount\(\) on mixed\.$#'
+            path: tests/Pest.php
         # Real finding, kept for its own ticket: the `searchwp\query\before`
         # callback returns early with no value when the `type` query variable is
         # absent. Fixing it changes what the filter returns, which this adoption

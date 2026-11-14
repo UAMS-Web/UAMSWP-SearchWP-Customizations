@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-use SearchWP\Utils;
-
 /**
  * Register the plugin's SearchWP and ACF hooks.
  */
@@ -11,29 +9,7 @@ function uamswp_searchwp_customizations_register_hooks(): void
 {
     // @link https://searchwp.com/documentation/multisite/
     // Tell SearchWP to search the entire Multisite network when searching on the main site.
-    add_filter('searchwp\query\args', function ($args, $query) {
-        // If this is not site 1, bail out.
-        if (get_current_blog_id() !== 1) {
-            return $args;
-        }
-
-        $search_sites = [];
-        if (class_exists('ACF')) {
-            $search_sites = get_field('uams_searchwp_sites', 'option');
-        }
-
-        if (empty($search_sites)) {
-            $search_sites = [1];
-        }
-
-        // Search sites listed in the settings.
-        $args['site'] = $search_sites;
-
-        // Retain site info in results.
-        $args['fields'] = 'default';
-
-        return $args;
-    }, 10, 2);
+    add_filter('searchwp\query\args', uamswp_searchwp_query_args(...), 10, 2);
 
     // Function to add ACF settings and fields
     add_action('acf/init', function (): void {
@@ -144,34 +120,7 @@ function uamswp_searchwp_customizations_register_hooks(): void
     }, 30, 2);
 
     // Conditionally remove a SearchWP Engine Source.
-    add_filter('searchwp\query\before', function ($query): void {
-        // Applies only if `type` GET variable exists.
-        if (! isset($_GET['type'])) {
-            return;
-        }
+    add_filter('searchwp\query\before', uamswp_searchwp_query_before(...), 20, 2);
 
-        // A non-string value (`?type[]=x`) reads as an empty type, which is what sanitize_text_field() returns for an array.
-        $type = is_string($_GET['type']) ? sanitize_text_field($_GET['type']) : '';
-
-        foreach ($query->get_engine()->get_sources() as $source) {
-            // Equivalent mutant: only strlen($flag) is used, and swapping the two operands of the concatenation does not change its length.
-            // @pest-mutate-ignore:ConcatSwitchSides
-            $flag = 'post'.SEARCHWP_SEPARATOR;
-            $source_name = substr($source->get_name(), strlen($flag));
-            if ($type !== $source_name) {
-                // Remove Posts from Engine.
-                $source_name = Utils::get_post_type_source_name($source_name);
-                $query->get_engine()->remove_source($source_name);
-            }
-        }
-
-    }, 20, 2);
-
-    add_filter('searchwp\source\attribute\label', function ($label, $args = []) {
-        if ($args['source'] === 'post.kb') {
-            return 'Knowledge Articles';
-        }
-
-        return $label;
-    }, 20, 2);
+    add_filter('searchwp\source\attribute\label', uamswp_searchwp_source_label(...), 20, 2);
 }

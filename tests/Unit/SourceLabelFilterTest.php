@@ -15,7 +15,13 @@ declare(strict_types=1);
  */
 function uamswp_source_label(string $label, array $args): string
 {
-    return uamswp_registered_hook('searchwp\source\attribute\label')['callback']($label, $args);
+    $result = uamswp_registered_hook('searchwp\source\attribute\label')['callback']($label, $args);
+
+    if (! is_string($result)) {
+        throw new UnexpectedValueException('The label callback must return a string.');
+    }
+
+    return $result;
 }
 
 it('renames the knowledge base source', function (): void {
