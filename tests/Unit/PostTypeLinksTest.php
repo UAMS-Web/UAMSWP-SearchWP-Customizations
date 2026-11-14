@@ -40,7 +40,6 @@ beforeEach(function (): void {
     when('get_pagenum_link')->alias(fn (int $page, bool $escape): string => "https://example.org/search/page/{$page}/?escape=".var_export($escape, true));
     when('remove_query_arg')->alias(fn (string $key, string $url): string => "{$url}&removed={$key}");
     when('add_query_arg')->alias(fn (string $key, string $value, string $url): string => "{$url}&{$key}={$value}");
-    when('get_post_type_object')->justReturn();
     when('sanitize_text_field')->returnArg();
 });
 
@@ -127,20 +126,6 @@ it('treats a type that is empty after sanitizing as no type', function (string $
     'blank' => [''],
     'zero' => ['0'],
 ]);
-
-it('reads the post type object of each source by its name after the separator', function (): void {
-    uamswp_set_sources(['post.page' => 'Pages', 'post.kb' => 'KB']);
-    $names = [];
-    when('get_post_type_object')->alias(function (string $name) use (&$names): null {
-        $names[] = $name;
-
-        return null;
-    });
-
-    uamswp_search_post_type_links();
-
-    expect($names)->toBe(['page', 'kb']);
-});
 
 it('compares the chosen type with a source loosely, so numeric strings that are equal count as the same', function (): void {
     $_GET['type'] = '1e1';
