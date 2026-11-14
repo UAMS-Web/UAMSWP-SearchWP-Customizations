@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use SearchWP\Engine;
+use SearchWP\Query;
+use SearchWP\Utils;
 
 // Generate list of subsites for field group
 /**
@@ -74,4 +76,86 @@ function uamswp_search_post_type_links(): string
     $links .= '</ul>';
 
     return $links;
+}
+
+/**
+ * The `searchwp\query\args` filter: search the sites listed in the settings, or site 1 alone.
+ *
+ * Tells SearchWP to search the entire Multisite network when searching on the main site.
+ *
+ * @link https://searchwp.com/documentation/multisite/
+ *
+ * The filter is registered with two arguments, and the query it passes second is not read.
+ *
+ * @param  array<string, mixed>  $args
+ * @param  mixed  $query
+ * @return array<string, mixed>
+ */
+function uamswp_searchwp_query_args($args, $query)
+{
+    // If this is not site 1, bail out.
+    if (get_current_blog_id() !== 1) {
+        return $args;
+    }
+
+    $search_sites = [];
+    if (class_exists('ACF')) {
+        $search_sites = get_field('uams_searchwp_sites', 'option');
+    }
+
+    if (empty($search_sites)) {
+        $search_sites = [1];
+    }
+
+    // Search sites listed in the settings.
+    $args['site'] = $search_sites;
+
+    // Retain site info in results.
+    $args['fields'] = 'default';
+
+    return $args;
+}
+
+/**
+ * The `searchwp\query\before` filter: remove every engine source but the one named by `?type=`.
+ *
+ * @param  Query  $query
+ */
+function uamswp_searchwp_query_before($query): void
+{
+    // Applies only if `type` GET variable exists.
+    if (! isset($_GET['type'])) {
+        return;
+    }
+
+    // A non-string value (`?type[]=x`) reads as an empty type, which is what sanitize_text_field() returns for an array.
+    $type = is_string($_GET['type']) ? sanitize_text_field($_GET['type']) : '';
+
+    foreach ($query->get_engine()->get_sources() as $source) {
+        // Equivalent mutant: only strlen($flag) is used, and swapping the two operands of the concatenation does not change its length.
+        // @pest-mutate-ignore:ConcatSwitchSides
+        $flag = 'post'.SEARCHWP_SEPARATOR;
+        $source_name = substr($source->get_name(), strlen($flag));
+        if ($type !== $source_name) {
+            // Remove Posts from Engine.
+            $source_name = Utils::get_post_type_source_name($source_name);
+            $query->get_engine()->remove_source($source_name);
+        }
+    }
+}
+
+/**
+ * The `searchwp\source\attribute\label` filter: rename the knowledge base source.
+ *
+ * @param  string  $label
+ * @param  array<string, mixed>  $args
+ * @return string
+ */
+function uamswp_searchwp_source_label($label, $args = [])
+{
+    if ($args['source'] === 'post.kb') {
+        return 'Knowledge Articles';
+    }
+
+    return $label;
 }

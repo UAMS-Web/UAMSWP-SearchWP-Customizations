@@ -11,9 +11,28 @@
 declare(strict_types=1);
 
 namespace SearchWP {
-    abstract class Source
+    final class Source
     {
-        abstract public function get_label(): string;
+        public function __construct(public string $label = '', private readonly string $name = '') {}
+
+        public function get_label(): string
+        {
+            return $this->label;
+        }
+
+        public function get_name(): string
+        {
+            return $this->name;
+        }
+    }
+
+    /**
+     * Named only so the plugin's docblocks can type the query the `searchwp\query\before`
+     * filter receives; the tests pass their own objects.
+     */
+    abstract class Query
+    {
+        abstract public function get_engine(): Engine;
     }
 
     final class Engine
@@ -37,6 +56,11 @@ namespace SearchWP {
         public function get_source(string $name): Source
         {
             return self::$sources[$name];
+        }
+
+        public function remove_source(string $name): void
+        {
+            unset(self::$sources[$name]);
         }
     }
 

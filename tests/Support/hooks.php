@@ -11,6 +11,8 @@
 
 declare(strict_types=1);
 
+use Patchwork\CallRerouting\Handle;
+
 use function Patchwork\redefine;
 use function Patchwork\relay;
 use function Patchwork\restore;
@@ -37,6 +39,7 @@ function uamswp_registered_hooks(): array
         return true;
     };
 
+    /** @var list<Handle> $redefinitions */
     $redefinitions = [
         redefine('add_filter', $capture),
         redefine('add_action', $capture),
@@ -44,7 +47,9 @@ function uamswp_registered_hooks(): array
 
     require dirname(__DIR__, 2).'/uamswp-searchwp-customizations.php';
 
-    array_map(restore(...), $redefinitions);
+    foreach ($redefinitions as $redefinition) {
+        restore($redefinition);
+    }
 
     return $registered;
 }
@@ -73,12 +78,12 @@ function uamswp_fake_symbols(array $classes = [], array $functions = []): void
     redefine('class_exists', function (...$arguments) use ($classes) {
         $name = $arguments[0];
 
-        return array_key_exists($name, $classes) ? $classes[$name] : relay($arguments);
+        return is_string($name) && array_key_exists($name, $classes) ? $classes[$name] : relay($arguments);
     });
 
     redefine('function_exists', function (...$arguments) use ($functions) {
         $name = $arguments[0];
 
-        return array_key_exists($name, $functions) ? $functions[$name] : relay($arguments);
+        return is_string($name) && array_key_exists($name, $functions) ? $functions[$name] : relay($arguments);
     });
 }

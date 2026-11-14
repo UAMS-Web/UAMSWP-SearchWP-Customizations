@@ -23,15 +23,7 @@ function uamswp_set_sources(array $labelsByName): void
     Engine::$sources = [];
 
     foreach ($labelsByName as $name => $label) {
-        Engine::$sources[$name] = new class($label) extends Source
-        {
-            public function __construct(public string $label) {}
-
-            public function get_label(): string
-            {
-                return $this->label;
-            }
-        };
+        Engine::$sources[$name] = new Source($label);
     }
 }
 
