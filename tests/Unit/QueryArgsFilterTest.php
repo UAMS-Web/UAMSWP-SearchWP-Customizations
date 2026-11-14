@@ -12,6 +12,12 @@ use Brain\Monkey\Functions;
 
 use function Brain\Monkey\Functions\when;
 
+/**
+ * Run the registered `searchwp\query\args` callback.
+ *
+ * @param  array<string, mixed>  $args
+ * @return array<string, mixed>
+ */
 function uamswp_query_args(array $args): array
 {
     return uamswp_registered_hook('searchwp\query\args')['callback']($args, new stdClass);
