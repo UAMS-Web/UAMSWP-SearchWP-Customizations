@@ -8,6 +8,11 @@
 
 declare(strict_types=1);
 
+/**
+ * Run the registered `searchwp\source\attribute\label` callback.
+ *
+ * @param  array<string, string>  $args
+ */
 function uamswp_source_label(string $label, array $args): string
 {
     return uamswp_registered_hook('searchwp\source\attribute\label')['callback']($label, $args);
