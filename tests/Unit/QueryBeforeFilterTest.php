@@ -92,6 +92,17 @@ it('removes every source except the one named by the type', function (): void {
     expect($removed)->toBe(['source-for-post', 'source-for-kb']);
 });
 
+it('reads a type given as an array as an empty type, without sanitizing it', function (): void {
+    $_GET['type'] = ['page'];
+    $removed = [];
+    Functions\expect('sanitize_text_field')->never();
+
+    // The source named `post.` has an empty name, so it is the one an empty type keeps.
+    uamswp_run_query_before(uamswp_query(['post.post', 'post.', 'post.page'], $removed));
+
+    expect($removed)->toBe(['source-for-post', 'source-for-page']);
+});
+
 it('removes nothing when the only source is the one named', function (): void {
     $_GET['type'] = 'kb';
     $removed = [];
