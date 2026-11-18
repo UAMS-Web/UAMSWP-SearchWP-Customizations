@@ -45,7 +45,7 @@ function uamswp_searchwp_customizations_register_hooks(): void
                         'label' => 'Sites to include',
                         'name' => 'uams_searchwp_sites',
                         'type' => 'checkbox',
-                        'instructions' => 'Sites to include in the search. Leave ',
+                        'instructions' => 'Sites to include in the search. Leave all unchecked to search the main site only.',
                         'required' => 0,
                         'conditional_logic' => 0,
                         'wrapper' => [
@@ -55,9 +55,8 @@ function uamswp_searchwp_customizations_register_hooks(): void
                         ],
                         'choices' => get_subsites_for_search(),
                         'allow_custom' => 0,
-                        'default_value' => [
-                            1 => get_bloginfo('name'),
-                        ],
+                        // The choices are keyed by site ID, so the default names the main site by its ID.
+                        'default_value' => [1],
                         'layout' => 'vertical',
                         'toggle' => 0,
                         'return_format' => 'value',

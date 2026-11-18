@@ -9,9 +9,9 @@ Written against v1.0.1.
 
 ## A search on the main site returns results from the main site only
 
-**Cause:** no site is ticked under **Sites to include**, so the plugin falls back to the main site alone.
+**Cause:** no site is selected under **Sites to include**, so the plugin falls back to the main site alone.
 
-**Fix:** open **UAMS Search Settings** on the main site, tick the sites to search and save. See [Settings](Settings.md#fields).
+**Fix:** open **UAMS Search Settings** on the main site, check the sites to search and save. See [Settings](Settings.md#fields).
 
 ## The UAMS Search Settings page is missing from the admin menu
 
