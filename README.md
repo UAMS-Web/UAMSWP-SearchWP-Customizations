@@ -2,6 +2,17 @@
 
 Customizations for SearchWP on the UAMS Health WordPress multisite.
 
+The settings, search behavior and troubleshooting are documented in the [wiki](https://github.com/UAMS-Web/UAMSWP-SearchWP-Customizations/wiki).
+
+## Requirements
+
+- WordPress 6.8 or later, as a multisite network.
+- PHP 8.2 or later.
+- SearchWP, with its multisite search.
+- Advanced Custom Fields Pro, for the settings page on the main site.
+
+Activate the plugin on the main site, where the settings page appears. See [Settings](https://github.com/UAMS-Web/UAMSWP-SearchWP-Customizations/wiki/Settings) in the wiki.
+
 ## Tests
 
 The suite uses Pest 5 with Brain Monkey, so it runs with no database and no WordPress checkout. It needs PHP 8.4.1 or later and Composer.
