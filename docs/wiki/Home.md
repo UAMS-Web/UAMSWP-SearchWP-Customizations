@@ -6,13 +6,13 @@ This plugin adjusts SearchWP on a WordPress multisite network: searching on the 
 
 ## Getting started
 
-- [Installation (README)](https://github.com/UAMS-Web/UAMSWP-SearchWP-Customizations#requirements): what the plugin needs and where it is activated.
+- [Installation (README)](https://github.com/UAMS-Web/UAMSWP-SearchWP-Customizations#requirements): what the plugin needs.
 
 ## Reference
 
 - [Settings](Settings.md): the options page on the main site and its two fields.
 - [Search behavior](Search-behavior.md): which sites are searched, how many results a page shows, the `?type=` filter and the renamed knowledge base source.
-- [Type filter links](Type-filter-links.md): the template function that prints one link per content type.
+- [Type filter links](Type-filter-links.md): the template function that lists the engine's sources as filter links.
 
 ## Troubleshooting
 

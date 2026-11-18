@@ -2,7 +2,7 @@
 
 Written against v1.0.1.
 
-`uamswp_search_post_type_links()` returns an HTML list with one link per content type in SearchWP's `default` engine, plus an **All** link. A theme's search template prints it above the results, so a reader can narrow a search to one type. The links set the `type` query argument described in [Search behavior](Search-behavior.md#narrowing-results-to-one-type).
+`uamswp_search_post_type_links()` returns an HTML list with one item per source in SearchWP's `default` engine, plus **All**. The current item is plain text; every other item is a link. A theme's search template prints it above the results, so a reader can narrow a search to one type. The links set the `type` query argument described in [Search behavior](Search-behavior.md#narrowing-results-to-one-type).
 
 The plugin defines the function but never prints it; the theme decides where it goes.
 
@@ -12,7 +12,7 @@ The plugin defines the function but never prints it; the theme decides where it 
 <?php echo uamswp_search_post_type_links(); ?>
 ```
 
-The return value is already escaped where it carries a URL, so print it as it is.
+Only the URLs in the return value are escaped; the labels and the `<script>` element described below are not.
 
 ## Output
 
@@ -32,4 +32,4 @@ Each link uses the label SearchWP gives the source (`get_label()`), except that 
 
 On a search with sources for posts and pages and no `type` set, the list holds **All** (current, no link), then a `News` link and a `Pages` link. Each link points at the first page of the current search (`get_pagenum_link( 1 )`) with `type=post` or `type=page` added, so its exact form follows the site's permalink structure.
 
-**Note:** after each type's list item the function also adds a `<script>` element whose body is that source's data encoded as JSON (`json_encode()`). It is part of the returned markup, so it reaches the page wherever the theme prints the list.
+**Note:** after each type's list item the function also adds a `<script>` element holding `json_encode()` of the SearchWP source object. It is part of the returned markup, so it reaches the page wherever the theme prints the list.

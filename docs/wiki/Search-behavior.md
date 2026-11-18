@@ -8,14 +8,16 @@ The plugin changes SearchWP through four SearchWP filters. Each section below na
 | --- | --- | --- |
 | `searchwp\query\args` | 10 | Chooses the sites a search on the main site covers. |
 | `searchwp\query\per_page` | 30 | Sets the number of results per page. |
-| `searchwp\query\before` | 20 | Keeps only the engine source named by `?type=`. |
+| `searchwp\query\before` | 20 | When `?type=` is set, removes every post-type source but the one it names. |
 | `searchwp\source\attribute\label` | 20 | Returns `Knowledge Articles` for each `post.kb` label the filter receives. |
 
 ## Which sites are searched
 
-On the main site (site ID 1), a search covers the sites ticked under **Sites to include** on the [Settings](Settings.md) page. When none are ticked, or when ACF is not active, it covers the main site alone. The plugin also asks SearchWP for its default result fields, so each result keeps the site it came from.
+On the main site (site ID 1), a search covers the sites ticked under **Sites to include** on the [Settings](Settings.md) page. When none are ticked, it covers the main site alone. The plugin also sets SearchWP's `fields` argument to `default`, which its code comment describes as keeping the site each result came from.
 
-On any other site in the network, the plugin leaves the search as SearchWP built it: that site alone.
+**Note:** ACF must be active. The sites setting is read only when ACF is loaded, but the results-per-page filter calls `get_field()` without that check, so without ACF a search fails with `Call to undefined function get_field()`.
+
+On any other site in the network, the plugin leaves SearchWP's query arguments unchanged.
 
 ## Results per page
 
@@ -25,13 +27,13 @@ Each page of results shows the number set under **Results per page** on the [Set
 
 ## Narrowing results to one type
 
-A search URL with a `type` query argument returns results from one engine source only. The value is a post type name, the part of the SearchWP source name after `post.`:
+A search URL with a `type` query argument narrows the results to one post type. The value is a post type name, the part of the SearchWP source name after `post.`:
 
 ```text
 https://example.org/?s=example&type=page
 ```
 
-keeps the `post.page` source and removes every other source from the engine the query uses. Without `type`, every source is searched. A `type` that names no source removes all of them, so the search returns nothing; so does a `type` passed as an array (`?type[]=page`), which is read as an empty value.
+keeps the `post.page` source and removes every other post-type source from the engine the query uses. Without `type`, the engine is left as it is. A `type` that is empty (`?type=`), names no source, or is passed as an array (`?type[]=page`, read as empty) removes every post-type source.
 
 The [Type filter links](Type-filter-links.md) function prints links that set this argument.
 

@@ -9,9 +9,9 @@ The settings, search behavior and troubleshooting are documented in the [wiki](h
 - WordPress 6.8 or later, as a multisite network.
 - PHP 8.2 or later.
 - SearchWP, with its multisite search.
-- Advanced Custom Fields Pro, for the settings page on the main site.
+- Advanced Custom Fields Pro, active wherever search runs: it provides the settings page on the main site, and the results-per-page filter reads its setting through ACF.
 
-Activate the plugin on the main site, where the settings page appears. See [Settings](https://github.com/UAMS-Web/UAMSWP-SearchWP-Customizations/wiki/Settings) in the wiki.
+The settings page appears on the main site only. See [Settings](https://github.com/UAMS-Web/UAMSWP-SearchWP-Customizations/wiki/Settings) in the wiki.
 
 ## Tests
 
