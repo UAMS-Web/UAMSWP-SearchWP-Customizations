@@ -22,12 +22,14 @@ it('returns the number saved in the settings', function (): void {
         ->once()
         ->with('uams_searchwp_results_per_page', 'option')
         ->andReturn(12);
+    uamswp_fake_symbols(classes: ['ACF' => true]);
 
     expect(uamswp_per_page())->toBe(12);
 });
 
 it('returns 20 when nothing is saved', function (mixed $saved): void {
     when('get_field')->justReturn($saved);
+    uamswp_fake_symbols(classes: ['ACF' => true]);
 
     expect(uamswp_per_page(7))->toBe(20);
 })->with([
@@ -36,3 +38,10 @@ it('returns 20 when nothing is saved', function (mixed $saved): void {
     'zero' => [0],
     'empty string' => [''],
 ]);
+
+it('returns 20 without reading the setting when ACF is not loaded', function (): void {
+    Functions\expect('get_field')->never();
+    uamswp_fake_symbols(classes: ['ACF' => false]);
+
+    expect(uamswp_per_page(7))->toBe(20);
+});
