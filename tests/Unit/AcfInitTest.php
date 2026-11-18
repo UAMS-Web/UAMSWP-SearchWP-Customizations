@@ -47,7 +47,7 @@ function uamswp_expected_field_group(): array
                 'label' => 'Sites to include',
                 'name' => 'uams_searchwp_sites',
                 'type' => 'checkbox',
-                'instructions' => 'Sites to include in the search. Leave ',
+                'instructions' => 'Sites to include in the search. Leave all unticked to search the main site only.',
                 'required' => 0,
                 'conditional_logic' => 0,
                 'wrapper' => [
@@ -57,9 +57,7 @@ function uamswp_expected_field_group(): array
                 ],
                 'choices' => [1 => 'UAMS Health (ID: 1)', 5 => 'Cardiology (ID: 5)'],
                 'allow_custom' => 0,
-                'default_value' => [
-                    1 => 'UAMS Health',
-                ],
+                'default_value' => [1],
                 'layout' => 'vertical',
                 'toggle' => 0,
                 'return_format' => 'value',
@@ -112,7 +110,6 @@ function uamswp_stub_two_sites(): void
 {
     when('get_sites')->justReturn([(object) ['blog_id' => 1], (object) ['blog_id' => 5]]);
     when('get_blog_details')->alias(fn (int $id): object => (object) ['blogname' => $id === 1 ? 'UAMS Health' : 'Cardiology']);
-    when('get_bloginfo')->justReturn('UAMS Health');
 }
 
 it('does nothing when ACF has neither function', function (): void {
@@ -176,3 +173,38 @@ it('adds nothing on any site but the first', function (bool $hasOptionsPage, boo
     'settings page only' => [true, false],
     'field group only' => [false, true],
 ]);
+
+/**
+ * Run `acf/init` and return the sites field it registers.
+ *
+ * @return array<mixed>
+ */
+function uamswp_registered_sites_field(): array
+{
+    $field = null;
+    Functions\expect('acf_add_local_field_group')->once()->andReturnUsing(function (array $group) use (&$field): void {
+        $fields = $group['fields'] ?? null;
+        $field = is_array($fields) ? ($fields[0] ?? null) : null;
+    });
+    uamswp_fake_symbols(functions: ['acf_add_options_page' => false, 'acf_add_local_field_group' => true]);
+
+    uamswp_run_acf_init();
+
+    if (! is_array($field)) {
+        throw new UnexpectedValueException('acf/init must register a field group whose first field is an array.');
+    }
+
+    return $field;
+}
+
+it('defaults the sites field to a choice it offers: the main site', function (): void {
+    when('get_current_blog_id')->justReturn(1);
+    uamswp_stub_two_sites();
+
+    $field = uamswp_registered_sites_field();
+    $choices = $field['choices'] ?? null;
+
+    expect($field['default_value'] ?? null)->toBe([1])
+        ->and(is_array($choices) ? array_keys($choices) : [])->toContain(1)
+        ->and($field['instructions'] ?? null)->toBe('Sites to include in the search. Leave all unticked to search the main site only.');
+});
