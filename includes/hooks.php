@@ -109,7 +109,8 @@ function uamswp_searchwp_customizations_register_hooks(): void
 
     // Set results per page for SearchWP results.
     add_filter('searchwp\query\per_page', function ($per_page, $args) {
-        $results_per_page = get_field('uams_searchwp_results_per_page', 'option');
+        // Read the setting only when ACF is loaded, as uamswp_searchwp_query_args() does; get_field() is ACF's.
+        $results_per_page = class_exists('ACF') ? get_field('uams_searchwp_results_per_page', 'option') : null;
 
         // Default value
         if (empty($results_per_page)) {

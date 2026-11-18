@@ -15,7 +15,7 @@ The plugin changes SearchWP through four SearchWP filters. Each section below na
 
 On the main site (site ID 1), a search covers the sites ticked under **Sites to include** on the [Settings](Settings.md) page. When none are ticked, it covers the main site alone. The plugin also sets SearchWP's `fields` argument to `default`, which its code comment describes as keeping the site each result came from.
 
-**Note:** ACF must be active. The sites setting is read only when ACF is loaded, but the results-per-page filter calls `get_field()` without that check, so without ACF a search fails with `Call to undefined function get_field()`.
+**Note:** both settings are read only when ACF is loaded. Without ACF, a search on the main site covers the main site alone and shows 20 results per page. In v1.0.1 and earlier, the results-per-page filter read its setting without that check, so a search with ACF inactive failed with `Call to undefined function get_field()` (fixed by [UAMS-Web/UAMSWP-SearchWP-Customizations#72](https://github.com/UAMS-Web/UAMSWP-SearchWP-Customizations/issues/72)).
 
 On any other site in the network, the plugin leaves SearchWP's query arguments unchanged.
 
