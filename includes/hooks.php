@@ -45,7 +45,7 @@ function uamswp_searchwp_customizations_register_hooks(): void
                         'label' => 'Sites to include',
                         'name' => 'uams_searchwp_sites',
                         'type' => 'checkbox',
-                        'instructions' => 'Sites to include in the search. Leave all unticked to search the main site only.',
+                        'instructions' => 'Sites to include in the search. Leave all unchecked to search the main site only.',
                         'required' => 0,
                         'conditional_logic' => 0,
                         'wrapper' => [

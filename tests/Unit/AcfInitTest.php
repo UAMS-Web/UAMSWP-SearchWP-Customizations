@@ -47,7 +47,7 @@ function uamswp_expected_field_group(): array
                 'label' => 'Sites to include',
                 'name' => 'uams_searchwp_sites',
                 'type' => 'checkbox',
-                'instructions' => 'Sites to include in the search. Leave all unticked to search the main site only.',
+                'instructions' => 'Sites to include in the search. Leave all unchecked to search the main site only.',
                 'required' => 0,
                 'conditional_logic' => 0,
                 'wrapper' => [
@@ -206,5 +206,5 @@ it('defaults the sites field to a choice it offers: the main site', function ():
 
     expect($field['default_value'] ?? null)->toBe([1])
         ->and(is_array($choices) ? array_keys($choices) : [])->toContain(1)
-        ->and($field['instructions'] ?? null)->toBe('Sites to include in the search. Leave all unticked to search the main site only.');
+        ->and($field['instructions'] ?? null)->toBe('Sites to include in the search. Leave all unchecked to search the main site only.');
 });
