@@ -64,13 +64,11 @@ function uamswp_search_post_type_links(): string
         }
 
         if ($type == $post_name) {
-            $links .= '<li class="nav-item active pr-2 font-weight-bold">'.$post_type_name.'</li>';
+            $links .= '<li class="nav-item active pr-2 font-weight-bold">'.esc_html($post_type_name).'</li>';
         } else {
             // $link = get_pagenum_link();
-            $links .= '<li class="nav-item pr-2"><a class="" href="'.esc_url(add_query_arg('type', $post_name, get_pagenum_link(1, false))).'">'.$post_type_name.'</a></li>';
+            $links .= '<li class="nav-item pr-2"><a class="" href="'.esc_url(add_query_arg('type', $post_name, get_pagenum_link(1, false))).'">'.esc_html($post_type_name).'</a></li>';
         }
-
-        $links .= '<script>'.json_encode($source_type).'</script>';
     }
 
     $links .= '</ul>';

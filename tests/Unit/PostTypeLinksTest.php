@@ -58,9 +58,7 @@ it('marks All active and links every source when no type is chosen', function ()
         '<ul class="nav">'
         .'<li class="nav-item active pr-2 font-weight-bold">All</li>'
         .'<li class="nav-item pr-2"><a class="" href="https://example.org/search/page/1/?escape=false&type=post">News</a></li>'
-        .'<script>{"label":"Posts"}</script>'
         .'<li class="nav-item pr-2"><a class="" href="https://example.org/search/page/1/?escape=false&type=page">Pages</a></li>'
-        .'<script>{"label":"Pages"}</script>'
         .'</ul>'
     );
 });
@@ -73,9 +71,7 @@ it('links All back and marks the chosen source active', function (): void {
         '<ul class="nav">'
         .'<li class="nav-item pr-2"><a class="" href="https://example.org/search/page/1/?escape=false&removed=type">All</a></li> '
         .'<li class="nav-item pr-2"><a class="" href="https://example.org/search/page/1/?escape=false&type=post">News</a></li>'
-        .'<script>{"label":"Posts"}</script>'
         .'<li class="nav-item active pr-2 font-weight-bold">Pages</li>'
-        .'<script>{"label":"Pages"}</script>'
         .'</ul>'
     );
 });
@@ -134,4 +130,30 @@ it('compares the chosen type with a source loosely, so numeric strings that are 
     uamswp_set_sources(['post.10' => 'Tens']);
 
     expect(uamswp_search_post_type_links())->toContain('<li class="nav-item active pr-2 font-weight-bold">Tens</li>');
+});
+
+it('prints no script element after the source items', function (): void {
+    $_GET['type'] = 'page';
+    uamswp_set_sources(['post.post' => 'Posts', 'post.page' => 'Pages']);
+
+    expect(uamswp_search_post_type_links())->not->toContain('<script');
+});
+
+it('escapes a linked label', function (): void {
+    uamswp_set_sources(['post.kb' => 'Q&A <b>tips</b>']);
+
+    $html = uamswp_search_post_type_links();
+
+    expect($html)->toContain('>Q&amp;A &lt;b&gt;tips&lt;/b&gt;</a></li>');
+    expect(str_contains($html, '<b>'))->toBeFalse();
+});
+
+it('escapes the active label', function (): void {
+    $_GET['type'] = 'kb';
+    uamswp_set_sources(['post.kb' => 'Q&A <b>tips</b>']);
+
+    $html = uamswp_search_post_type_links();
+
+    expect($html)->toContain('<li class="nav-item active pr-2 font-weight-bold">Q&amp;A &lt;b&gt;tips&lt;/b&gt;</li>');
+    expect(str_contains($html, '<b>'))->toBeFalse();
 });
