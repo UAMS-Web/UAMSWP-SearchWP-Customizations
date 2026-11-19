@@ -12,7 +12,7 @@ The plugin defines the function but never prints it; the theme decides where it 
 <?php echo uamswp_search_post_type_links(); ?>
 ```
 
-Only the URLs in the return value are escaped; the labels and the `<script>` element described below are not.
+The URLs and the labels in the return value are escaped.
 
 ## Output
 
@@ -26,10 +26,10 @@ The theme's styles decide how the list looks.
 
 ## Labels
 
-Each link uses the label SearchWP gives the source (`get_label()`), except that `Posts` is shown as `News`.
+Each link uses the label SearchWP gives the source (`get_label()`), except that `Posts` is shown as `News`. Each label is escaped with `esc_html()`.
 
 ## Example
 
 On a search with sources for posts and pages and no `type` set, the list holds **All** (current, no link), then a `News` link and a `Pages` link. Each link points at the first page of the current search (`get_pagenum_link( 1 )`) with `type=post` or `type=page` added, so its exact form follows the site's permalink structure.
 
-**Note:** after each type's list item the function also adds a `<script>` element holding `json_encode()` of the SearchWP source object. It is part of the returned markup, so it reaches the page wherever the theme prints the list.
+**Note:** in v1.0.1 and earlier, the function added a `<script>` element holding `json_encode()` of the SearchWP source object after each type's list item, and printed the labels without escaping them. The element is gone and each label is escaped with `esc_html()`, so a label containing `<` is printed as `&lt;` (fixed by [UAMS-Web/UAMSWP-SearchWP-Customizations#74](https://github.com/UAMS-Web/UAMSWP-SearchWP-Customizations/issues/74)).
