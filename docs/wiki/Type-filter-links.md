@@ -32,4 +32,4 @@ Each link uses the label SearchWP gives the source (`get_label()`), except that 
 
 On a search with sources for posts and pages and no `type` set, the list holds **All** (current, no link), then a `News` link and a `Pages` link. Each link points at the first page of the current search (`get_pagenum_link( 1 )`) with `type=post` or `type=page` added, so its exact form follows the site's permalink structure.
 
-**Note:** v1.0.1 added a `<script>` element holding `json_encode()` of the SearchWP source object after each type's list item, and printed the labels without escaping them. #74 removes the element and escapes each label with `esc_html()`, so a label containing `<` is printed as `&lt;`.
+**Note:** in v1.0.1 and earlier, the function added a `<script>` element holding `json_encode()` of the SearchWP source object after each type's list item, and printed the labels without escaping them. The element is gone and each label is escaped with `esc_html()`, so a label containing `<` is printed as `&lt;` (fixed by [UAMS-Web/UAMSWP-SearchWP-Customizations#74](https://github.com/UAMS-Web/UAMSWP-SearchWP-Customizations/issues/74)).
